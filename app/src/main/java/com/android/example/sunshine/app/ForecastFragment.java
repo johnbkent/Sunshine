@@ -1,5 +1,6 @@
 package com.android.example.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -71,6 +73,15 @@ public class ForecastFragment extends Fragment {
                 R.id.list_item_forecast_textview,weekForecast);
         ListView ourList= (ListView) rootView.findViewById(R.id.listview_forecast);
         ourList.setAdapter(mForecastAdapter);
+        ourList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String text = mForecastAdapter.getItem(position);
+                Intent detailIntent = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT, text);
+                startActivity(detailIntent);
+            }
+        });
+
         return rootView;
 
 
@@ -87,6 +98,7 @@ public class ForecastFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             new FetchWeatherTask().execute("94043");
+            return true;
 
 
         }
