@@ -26,14 +26,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_detail);
+        setContentView(R.layout.activity_detail);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new DetailFragment())
+                    .commit();
+        }
 
 
 
@@ -89,7 +93,6 @@ public class DetailActivity extends AppCompatActivity {
             Intent intent = getActivity().getIntent();
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
                 String message = intent.getStringExtra(Intent.EXTRA_TEXT);
-                Toast.makeText(getActivity(),message, Toast.LENGTH_SHORT).show();
                 ((TextView) rootView.findViewById(R.id.detail_text)).setText(message);
             }
             return rootView;
