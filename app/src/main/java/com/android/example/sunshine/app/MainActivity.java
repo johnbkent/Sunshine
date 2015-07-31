@@ -15,11 +15,18 @@ import android.widget.ShareActionProvider;
 public class MainActivity extends ActionBarActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private ShareActionProvider mShareActionProvider;
+    private String mLocation;
+    private final String FORECASTFRAGMENT_TAG = "FFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        mLocation = Utility.getPreferredLocation(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (savedInstanceState == null){
+            getSupportFragmentManager().beginTransaction().add(R.id.container, new ForecastFragment(),FORECASTFRAGMENT_TAG)
+                    .commit();
+        }
         Log.v(LOG_TAG, "onCreate");
 
 
@@ -54,8 +61,16 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onResume(){
-        Log.v(LOG_TAG, "onResume");
         super.onResume();
+        Log.v(LOG_TAG, "onResume");
+        String location = Utility.getPreferredLocation(this);
+        if (location!=null&&!location.equals(mLocation)){
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if (null != ff){
+                ff.onLocationChanged();
+            }
+            mLocation=location;
+        }
     }
 
 
