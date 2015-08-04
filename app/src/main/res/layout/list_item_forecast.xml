@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical" android:id="@+id/list_item_forecast_textview"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent" android:layout_height="wrap_content" >
 
-    android:maxLines="1" />
+    <ImageView android:id="@+id/list_item_icon" android:layout_height="wrap_content" android:layout_width="0dp"
+        android:src="@mipmap/ic_launcher" android:layout_weight="1"/>
+
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="0dp" android:orientation="vertical"
+        android:layout_weight="3">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:gravity="center_vertical" android:id="@+id/list_item_date_textview" android:padding="@dimen/abc_action_bar_default_padding_material"/>
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:padding="@dimen/abc_action_bar_default_padding_material"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center_vertical" android:id="@+id/list_item_forecast_textview" />
+
+    </LinearLayout>
+    <LinearLayout android:layout_gravity="end"  android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="0dp" android:layout_weight="1">
+        <TextView android:id="@+id/list_item_high_textview" android:layout_height="wrap_content" android:layout_width="wrap_content"
+            android:padding="@dimen/abc_action_bar_default_padding_material"/>
+        <TextView android:id="@+id/list_item_low_textview" android:layout_height="wrap_content" android:layout_width="wrap_content"
+             android:padding="@dimen/abc_action_bar_default_padding_material"/>
+    </LinearLayout>
+</LinearLayout>
