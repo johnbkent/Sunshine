@@ -45,7 +45,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
-            WeatherContract.WeatherEntry.COLUMN_PRESSURE
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
 
     };
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
@@ -58,6 +59,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_WEATHER_WIND_SPEED = 6;
     static final int COL_WEATHER_DEGREES = 7;
     static final int COL_WEATHER_PRESSURE = 8;
+    static final int COL_WEATHER_CONDITION_ID=9;
 
     private String forecastStr;
     private ShareActionProvider mShareActionProvider;
@@ -101,11 +103,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         String friendlyDateString = Utility.getFriendlyDayString(getActivity(),data.getLong(COL_WEATHER_DATE));
         String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
         String weatherDescription = data.getString(COL_WEATHER_DESC);
+        int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
         boolean isMetric = Utility.isMetric(getActivity());
         String high = Utility.formatTemperature(getActivity(),data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
         String low = Utility.formatTemperature(getActivity(),data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
         ViewHolder vh = (ViewHolder) getView().getTag();
-        vh.iconView.setImageResource(R.mipmap.ic_launcher);
+        vh.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
         vh.dateView.setText(dateString);
         vh.headerView.setText(friendlyDateString);
         vh.descriptionView.setText(weatherDescription);
