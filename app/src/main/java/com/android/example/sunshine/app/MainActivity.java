@@ -12,25 +12,49 @@ import android.view.MenuItem;
 import android.widget.ShareActionProvider;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private ShareActionProvider mShareActionProvider;
     private String mLocation;
-    private final String FORECASTFRAGMENT_TAG = "FFTAG";
+    private boolean mTwoPane;
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         mLocation = Utility.getPreferredLocation(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().add(R.id.container, new ForecastFragment(),FORECASTFRAGMENT_TAG)
-                    .commit();
+        if (findViewById(R.id.weather_detail_container) != null){
+            mTwoPane=true;
+            if (savedInstanceState==null){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+
+        } else {
+            mTwoPane=false;
         }
-        Log.v(LOG_TAG, "onCreate");
+
+        ForecastFragment forecastFragment = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+        forecastFragment.setUseTodayLayout(!mTwoPane);
 
 
+    }
 
+    public void onItemSelected(Uri dateUri){
+        if (mTwoPane){
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI,dateUri);
+            DetailFragment df = new DetailFragment();
+            df.setArguments(args);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container,df)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class).setData(dateUri);
+            startActivity(intent);
+        }
 
     }
 
@@ -65,9 +89,13 @@ public class MainActivity extends ActionBarActivity {
         Log.v(LOG_TAG, "onResume");
         String location = Utility.getPreferredLocation(this);
         if (location!=null&&!location.equals(mLocation)){
-            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             if (null != ff){
                 ff.onLocationChanged();
+            }
+            DetailFragment df = (DetailFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if ( null != df ) {
+                df.onLocationChanged(location);
             }
             mLocation=location;
         }

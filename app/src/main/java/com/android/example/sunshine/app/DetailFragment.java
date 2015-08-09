@@ -6,6 +6,7 @@ package com.android.example.sunshine.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -30,7 +31,7 @@ import com.android.example.sunshine.app.data.WeatherContract;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private static final String[] FORECAST_COLUMNS = {
+    private static final String[] DETAIL_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
             // (both have an _id column)
@@ -63,8 +64,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private String forecastStr;
     private ShareActionProvider mShareActionProvider;
+    private Uri mUri;
 
     private final int LOADER_ID = 77;
+    static final String DETAIL_URI = "URI";
 
     public static class ViewHolder {
         public final ImageView iconView;
@@ -91,10 +94,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent==null) return null;
-        return new CursorLoader(getActivity(),intent.getData(),FORECAST_COLUMNS, null, null, null);
-
+        if (null !=mUri)
+        return new CursorLoader(getActivity(),mUri,DETAIL_COLUMNS, null, null, null);
+        return null;
     }
 
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data){
@@ -152,11 +154,25 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     }
 
+    void onLocationChanged(String newLocation){
+        //replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null!= uri ) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(LOADER_ID,null,this);
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri=arguments.getParcelable(DETAIL_URI);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         ViewHolder viewHolder= new ViewHolder(rootView);
