@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.example.sunshine.app.data.WeatherContract;
+import com.android.example.sunshine.app.sync.SunshineSyncAdapter;
 
 
 /**
@@ -200,9 +200,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     //Helper method
     public void updateWeather(){
-        sharedPref= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-        new FetchWeatherTask(getActivity()).execute(location);
+
+//        AlarmManager alm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//        Intent helperIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+//        helperIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA,Utility.getPreferredLocation(getActivity()));
+//        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(),0,helperIntent,PendingIntent.FLAG_ONE_SHOT);
+//        alm.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, alarmIntent);
+//
+        // Pass the settings flags by inserting them in a bundle
+        SunshineSyncAdapter.syncImmediately(getActivity());
     }
 
 
