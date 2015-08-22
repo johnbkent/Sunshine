@@ -1,10 +1,8 @@
 package com.android.example.sunshine.app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -114,20 +112,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
        return true;
     }
 
-    private void openPreferredLocationInMap(){
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        String location = pref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-        Intent locationIntent = new Intent(Intent.ACTION_VIEW);
-        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
-                                .appendQueryParameter("q", location)
-                                .build();
-        locationIntent.setData(geoLocation);
-        if (locationIntent.resolveActivity(getPackageManager())!=null){
-            startActivity(locationIntent);
-        } else {
-            Log.d(LOG_TAG, "couldn't call " + location + ", no receiving apps installed");
-        }
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -141,11 +126,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
-        if (id == R.id.view_location){
-            openPreferredLocationInMap();
-            return true;
 
-        }
 
 
 

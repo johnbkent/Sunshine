@@ -1,6 +1,6 @@
 package com.android.example.sunshine.app;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,8 +28,7 @@ import com.android.example.sunshine.app.sync.SunshineSyncAdapter;
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private ForecastAdapter mForecastAdapter;
-    SharedPreferences sharedPref;
-    String location;
+    private final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private boolean mUseTodayLayout;
     private ListView mListView;
     private int mPosition= ListView.INVALID_POSITION;
@@ -182,14 +182,32 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            updateWeather();
-            return true;
 
+
+        if (id == R.id.view_location){
+            openPreferredLocationInMap();
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openPreferredLocationInMap(){
+        if (null != mForecastAdapter) {
+            Cursor c = mForecastAdapter.getCursor();
+            if (null != c) {
+                c.moveToPosition(0);
+                String posLat = c.getString(COL_COORD_LAT);
+                String posLong = c.getString(COL_COORD_LONG);
+                Uri geoLocation = Uri.parse("geo:" +posLat +"," + posLong);
+                Intent locationIntent =new Intent(Intent.ACTION_VIEW);
+                locationIntent.setData(geoLocation);
+                if (locationIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(locationIntent);
+                } else {
+                    Log.d(LOG_TAG, "couldn't call " + geoLocation.toString() + ", no receiving apps installed");
+                }
+            }
+        }
     }
 
     @Override
